@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Cofre do Cláudio</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <span class="eyebrow">OFFLINE • PRIVADO</span>
+      <h1>Cofre do Cláudio</h1>
+    </div>
+    <button id="quickAdd" class="round" title="Nova ideia">＋</button>
+  </header>
+
+  <main>
+    <section class="toolbar">
+      <input id="search" type="search" placeholder="Buscar ideias, decisões, senhas...">
+      <select id="projectFilter">
+        <option value="">Todos os projetos</option>
+      </select>
+    </section>
+
+    <section class="tabs" aria-label="Seções">
+      <button class="tab active" data-tab="notes">Notas</button>
+      <button class="tab" data-tab="vault">Senhas</button>
+      <button class="tab" data-tab="projects">Projetos</button>
+      <button class="tab" data-tab="backup">Backup</button>
+    </section>
+
+    <section id="notes" class="panel active">
+      <div class="sectionHead">
+        <div>
+          <h2>Ideias e anotações</h2>
+          <p>Guarde o que não pode se perder.</p>
+        </div>
+        <button id="newNote" class="primary">Nova nota</button>
+      </div>
+      <div id="notesList" class="cards"></div>
+    </section>
+
+    <section id="vault" class="panel">
+      <div id="vaultLocked" class="vaultGate">
+        <div class="lock">🔐</div>
+        <h2>Cofre de senhas</h2>
+        <p>Protegido por uma senha-mestra que não é salva no aparelho.</p>
+        <input id="masterPassword" type="password" autocomplete="current-password" placeholder="Senha-mestra">
+        <button id="unlockVault" class="primary">Abrir cofre</button>
+        <small id="vaultMessage"></small>
+      </div>
+
+      <div id="vaultOpen" hidden>
+        <div class="sectionHead">
+          <div>
+            <h2>Senhas e acessos</h2>
+            <p>Criptografados neste aparelho.</p>
+          </div>
+          <div class="actions">
+            <button id="lockVault" class="ghost">Trancar</button>
+            <button id="newPassword" class="primary">Nova senha</button>
+          </div>
+        </div>
+        <div id="passwordList" class="cards"></div>
+      </div>
+    </section>
+
+    <section id="projects" class="panel">
+      <div class="sectionHead">
+        <div>
+          <h2>Projetos</h2>
+          <p>Separe as ideias por aplicativo ou assunto.</p>
+        </div>
+        <button id="newProject" class="primary">Novo projeto</button>
+      </div>
+      <div id="projectList" class="cards compact"></div>
+    </section>
+
+    <section id="backup" class="panel">
+      <div class="sectionHead">
+        <div>
+          <h2>Backup</h2>
+          <p>Exporte uma cópia para guardar fora do celular.</p>
+        </div>
+      </div>
+      <div class="backupGrid">
+        <article class="infoCard">
+          <h3>Exportar</h3>
+          <p>Baixa um arquivo com seus projetos, notas e o cofre criptografado.</p>
+          <button id="exportBackup" class="primary">Baixar backup</button>
+        </article>
+        <article class="infoCard">
+          <h3>Restaurar</h3>
+          <p>Importe um backup criado pelo Cofre do Cláudio.</p>
+          <label class="fileBtn">Escolher arquivo<input id="importBackup" type="file" accept=".json,application/json"></label>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="noteDialog">
+    <form method="dialog" id="noteForm" class="dialogForm">
+      <h3 id="noteDialogTitle">Nova nota</h3>
+      <input id="noteTitle" required placeholder="Título">
+      <select id="noteProject"></select>
+      <select id="noteType">
+        <option value="ideia">💡 Ideia</option>
+        <option value="decisao">✅ Decisão</option>
+        <option value="importante">📌 Importante</option>
+        <option value="tarefa">🛠️ Tarefa</option>
+        <option value="geral">📝 Geral</option>
+      </select>
+      <textarea id="noteText" required rows="7" placeholder="Escreva aqui..."></textarea>
+      <label class="check"><input id="noteFavorite" type="checkbox"> Favorito</label>
+      <div class="dialogActions">
+        <button value="cancel" class="ghost">Cancelar</button>
+        <button id="saveNote" value="default" class="primary">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="projectDialog">
+    <form method="dialog" id="projectForm" class="dialogForm">
+      <h3>Novo projeto</h3>
+      <input id="projectName" required placeholder="Ex.: Meu Inglês">
+      <textarea id="projectDescription" rows="3" placeholder="Descrição opcional"></textarea>
+      <div class="dialogActions">
+        <button value="cancel" class="ghost">Cancelar</button>
+        <button value="default" class="primary">Criar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="passwordDialog">
+    <form method="dialog" id="passwordForm" class="dialogForm">
+      <h3>Nova senha</h3>
+      <input id="passwordName" required placeholder="Nome do acesso">
+      <select id="passwordProject"></select>
+      <input id="passwordUser" placeholder="Usuário / e-mail">
+      <input id="passwordValue" type="text" required placeholder="Senha">
+      <input id="passwordUrl" placeholder="Site ou observação">
+      <div class="dialogActions">
+        <button value="cancel" class="ghost">Cancelar</button>
+        <button value="default" class="primary">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="emptyTpl">
+    <div class="empty">Nada salvo aqui ainda.</div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
